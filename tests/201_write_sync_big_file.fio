@@ -1,0 +1,4 @@
+[sync-writer]
+ioengine=sync
+rw=write
+size=1G
