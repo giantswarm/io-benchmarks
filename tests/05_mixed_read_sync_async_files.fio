@@ -1,0 +1,25 @@
+; async read one single file randomly with 4 jobs
+[global]
+ioengine=libaio
+rw=randread
+bs=4K
+
+[sync reader]
+ioengine=sync
+rw=read
+size=1G
+
+[async reader 1]
+size=250M
+
+[async reader 2]
+size=300M
+
+[async reader 3]
+size=500M
+
+[async reader 4]
+size=750M
+
+[async reader 5]
+size=100M
