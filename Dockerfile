@@ -7,4 +7,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir /host
 
+COPY tests /tests
+
 ENTRYPOINT [ "fio" ]
