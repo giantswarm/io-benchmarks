@@ -6,7 +6,7 @@ A project to perform I/O benchmarks.
 
 ```
 docker run --rm -it \
-  -v /:/host \
-  --workdir=/host/$(pwd) \
-  giantswarm.io/io-benchmarks /tests/<test_file>.fio
+  -v $(pwd):/mountpoint \
+  registry.giantswarm.io/giantswarm/io-benchmarks \
+  /tests/<test>.fio
 ```
