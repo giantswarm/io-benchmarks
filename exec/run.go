@@ -36,7 +36,7 @@ func RunCommand(executable string, arguments []string, workingDirectory string) 
 
 	cmd.Dir = workingDirectory
 
-	utils.Verbosef("running command: %s %s", executable, strings.Join(arguments, " "))
+	utils.Verbosef("running command in directory '%s': %s %s", cmd.Dir, executable, strings.Join(arguments, " "))
 	err := cmd.Run()
 
 	if err != nil {

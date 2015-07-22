@@ -1,3 +1,4 @@
 .gobuild/
 .io-benchmark/
+io-benchmark-results/
 *.go

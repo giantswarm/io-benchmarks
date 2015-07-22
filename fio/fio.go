@@ -10,7 +10,7 @@ import (
 	"github.com/juju/errgo"
 )
 
-type Configuration struct {
+type FioConfiguration struct {
 	JobDirectory     string
 	WorkingDirectory string
 	DirectMode       bool
@@ -22,10 +22,10 @@ type Configuration struct {
 }
 
 type FioRunner struct {
-	conf Configuration
+	conf FioConfiguration
 }
 
-func NewFioRunner(c Configuration) (FioRunner, error) {
+func NewFioRunner(c FioConfiguration) (FioRunner, error) {
 	var err error
 
 	if !fioExists() {
@@ -37,6 +37,10 @@ func NewFioRunner(c Configuration) (FioRunner, error) {
 	}
 
 	if c.WorkingDirectory, err = filepath.Abs(c.WorkingDirectory); err != nil {
+		return FioRunner{}, errgo.Mask(err)
+	}
+
+	if c.LogsDirectory, err = filepath.Abs(c.LogsDirectory); err != nil {
 		return FioRunner{}, errgo.Mask(err)
 	}
 

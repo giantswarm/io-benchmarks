@@ -57,7 +57,7 @@ func runTestRun(cmd *cobra.Command, args []string) {
 	}
 	test := args[0]
 
-	c := fio.Configuration{
+	fioConf := fio.FioConfiguration{
 		JobDirectory:         runFlags.TestsDirectory,
 		WorkingDirectory:     runFlags.WorkingDirectory,
 		DirectMode:           runFlags.DirectMode,
@@ -66,13 +66,22 @@ func runTestRun(cmd *cobra.Command, args []string) {
 		GenerateIOPSLogs:     runFlags.GenerateIOPSStats,
 		GenerateLatencyLogs:  runFlags.GenerateLatencyStats,
 	}
-	fio, err := fio.NewFioRunner(c)
+	fioRunner, err := fio.NewFioRunner(fioConf)
 
 	if err != nil {
 		utils.ExitStderr(err)
 	}
 
-	if err := fio.RunTest(test); err != nil {
+	if err := fioRunner.RunTest(test); err != nil {
+		utils.ExitStderr(err)
+	}
+
+	fio2gnuplotConf := fio.Fio2GNUPlotConfiguration{
+		LogsDirectory: runFlags.OutputDirectory,
+	}
+	fio2gnuplotRunner, err := fio.NewFio2GNUPlotRunner(fio2gnuplotConf)
+
+	if err := fio2gnuplotRunner.RunPlots(); err != nil {
 		utils.ExitStderr(err)
 	}
 }
