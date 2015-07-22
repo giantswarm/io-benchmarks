@@ -75,7 +75,7 @@ func (r FioRunner) RunTest(test string) error {
 		return errgo.Mask(err)
 	}
 
-	runErr := exec.RunCommand("fio", cmdArguments, r.conf.WorkingDirectory)
+	runErr := exec.RunCommand("fio", cmdArguments, "")
 
 	if err := r.removeWorkingDirectory(); err != nil {
 		return errgo.Mask(err)
