@@ -6,12 +6,20 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/giantswarm/io-benchmarks/utils"
-
-	"github.com/juju/errgo"
 )
+
+type CommandExecutionError struct {
+	Executable string
+	Arguments  []string
+	Stdout     bytes.Buffer
+	Stderr     bytes.Buffer
+}
+
+func (e CommandExecutionError) Error() string {
+	return fmt.Sprintf("command '%s' returned error: %s", e.Executable, e.Stderr.String())
+}
 
 func RunCommand(executable string, arguments []string, workingDirectory string) error {
 	var stdout, stderr bytes.Buffer
@@ -30,18 +38,12 @@ func RunCommand(executable string, arguments []string, workingDirectory string) 
 	err := cmd.Run()
 
 	if err != nil {
-		errMsg := fmt.Sprintf("The following command failed:\n\n\t%s", strings.Join(cmd.Args, " "))
-
-		if stdout.Len() > 0 {
-			errMsg += fmt.Sprintf("\n\nOuput of stdout was:\n\n\t%s", stdout.String())
+		return CommandExecutionError{
+			Executable: executable,
+			Arguments:  arguments,
+			Stdout:     stdout,
+			Stderr:     stderr,
 		}
-
-		if stderr.Len() > 0 {
-			errMsg += fmt.Sprintf("\n\nOutput of stderr was:\n\n\t%s", stderr.String())
-		}
-
-		utils.Stderrf(errMsg)
-		return errgo.New("Running fio did not succeed")
 	}
 
 	return nil
