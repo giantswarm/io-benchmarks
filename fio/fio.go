@@ -3,6 +3,7 @@ package fio
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/giantswarm/io-benchmarks/exec"
 
@@ -20,8 +21,18 @@ type FioRunner struct {
 }
 
 func NewFioRunner(c Configuration) (FioRunner, error) {
+	var err error
+
 	if !fioExists() {
 		return FioRunner{}, errgo.Newf("Cannot locate fio. Looks like it is not installed on your system.")
+	}
+
+	if c.JobDirectory, err = filepath.Abs(c.JobDirectory); err != nil {
+		return FioRunner{}, errgo.Mask(err)
+	}
+
+	if c.WorkingDirectory, err = filepath.Abs(c.WorkingDirectory); err != nil {
+		return FioRunner{}, errgo.Mask(err)
 	}
 
 	return FioRunner{
@@ -47,11 +58,17 @@ func (r FioRunner) RunTest(test string) error {
 		return errgo.Mask(err)
 	}
 
-	return exec.RunCommand("fio", cmdArguments, r.conf.WorkingDirectory)
+	runErr := exec.RunCommand("fio", cmdArguments, r.conf.WorkingDirectory)
+
+	if err := r.removeWorkingDirectory(); err != nil {
+		return errgo.Mask(err)
+	}
+
+	return errgo.Mask(runErr)
 }
 
 func (r FioRunner) createWorkingDirectory() error {
-	fi, err := os.Stat(r.conf.WorkingDirectory)
+	f, err := os.Open(r.conf.WorkingDirectory)
 
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -62,8 +79,32 @@ func (r FioRunner) createWorkingDirectory() error {
 		}
 	}
 
+	if fi, err := f.Stat(); err != nil {
+		return errgo.Mask(err)
+	} else if !fi.IsDir() {
+		return errgo.Newf("Working directory '%s' exists but appears to be a file.", r.conf.WorkingDirectory)
+	}
+
+	if fis, err := f.Readdir(0); err != nil {
+		return errgo.Mask(err)
+	} else if len(fis) > 0 {
+		return errgo.Newf("Working directory '%s' appears to be not empty.", r.conf.WorkingDirectory)
+	}
+
+	return nil
+}
+
+func (r FioRunner) removeWorkingDirectory() error {
+	fi, err := os.Stat(r.conf.WorkingDirectory)
+
+	if err != nil {
+		return errgo.Mask(err)
+	}
+
 	if !fi.IsDir() {
-		return errgo.Newf("Working directory '%s' exists and appears to be a file.", r.conf.WorkingDirectory)
+		return errgo.Newf("Working directory '%s' exists but appears to be a file.", r.conf.WorkingDirectory)
+	} else {
+		return os.RemoveAll(r.conf.WorkingDirectory)
 	}
 
 	return nil
