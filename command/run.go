@@ -26,6 +26,11 @@ var (
 		DirectMode       bool
 		TestsDirectory   string
 		WorkingDirectory string
+		OutputDirectory  string
+
+		GenerateBandwithStats bool
+		GenerateIOPSStats     bool
+		GenerateLatencyStats  bool
 	}
 )
 
@@ -33,6 +38,11 @@ func init() {
 	RunCmd.PersistentFlags().BoolVar(&runFlags.DirectMode, "direct-mode", true, "Use direct mode to bypass Kernel I/O buffers")
 	RunCmd.PersistentFlags().StringVar(&runFlags.TestsDirectory, "tests-directory", "./tests", "Directory to search for test files")
 	RunCmd.PersistentFlags().StringVar(&runFlags.WorkingDirectory, "working-directory", "./.io-benchmark", "Directory to perform benchmarks in")
+	RunCmd.PersistentFlags().StringVar(&runFlags.OutputDirectory, "output-directory", "./io-benchmark-results", "Directory to store results to")
+
+	RunCmd.PersistentFlags().BoolVar(&runFlags.GenerateBandwithStats, "generate-bandwith-stats", true, "Generate bandwith stats for plots")
+	RunCmd.PersistentFlags().BoolVar(&runFlags.GenerateIOPSStats, "generate-iops-stats", true, "Generate IOPS stats for plots")
+	RunCmd.PersistentFlags().BoolVar(&runFlags.GenerateLatencyStats, "generate-latency-stats", true, "Generate latency stats for plots")
 
 	RunCmd.AddCommand(runTestCmd)
 }
@@ -48,9 +58,13 @@ func runTestRun(cmd *cobra.Command, args []string) {
 	test := args[0]
 
 	c := fio.Configuration{
-		JobDirectory:     runFlags.TestsDirectory,
-		WorkingDirectory: runFlags.WorkingDirectory,
-		DirectMode:       runFlags.DirectMode,
+		JobDirectory:         runFlags.TestsDirectory,
+		WorkingDirectory:     runFlags.WorkingDirectory,
+		DirectMode:           runFlags.DirectMode,
+		LogsDirectory:        runFlags.OutputDirectory,
+		GenerateBandwithLogs: runFlags.GenerateBandwithStats,
+		GenerateIOPSLogs:     runFlags.GenerateIOPSStats,
+		GenerateLatencyLogs:  runFlags.GenerateLatencyStats,
 	}
 	fio, err := fio.NewFioRunner(c)
 

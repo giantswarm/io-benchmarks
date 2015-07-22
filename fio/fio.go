@@ -14,6 +14,11 @@ type Configuration struct {
 	JobDirectory     string
 	WorkingDirectory string
 	DirectMode       bool
+
+	LogsDirectory        string
+	GenerateBandwithLogs bool
+	GenerateIOPSLogs     bool
+	GenerateLatencyLogs  bool
 }
 
 type FioRunner struct {
@@ -49,6 +54,18 @@ func (r FioRunner) RunTest(test string) error {
 
 	if r.conf.WorkingDirectory != "" {
 		cmdArguments = append(cmdArguments, "--directory="+r.conf.WorkingDirectory)
+	}
+
+	if r.conf.GenerateBandwithLogs {
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_bw_log=%s/benchmark", r.conf.LogsDirectory))
+	}
+
+	if r.conf.GenerateIOPSLogs {
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_iops_log=%s/benchmark", r.conf.LogsDirectory))
+	}
+
+	if r.conf.GenerateLatencyLogs {
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_lat_log=%s/benchmark", r.conf.LogsDirectory))
 	}
 
 	testfilePath := fmt.Sprintf("%s/%s", r.conf.JobDirectory, test)
