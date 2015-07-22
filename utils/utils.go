@@ -85,6 +85,11 @@ func Confirm(question string) error {
 	}
 }
 
+// DebugError prints debug output of error values when debugging mode is turned on
+func DebugError(e error) {
+	debug(e)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // private
 

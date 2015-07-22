@@ -6,10 +6,9 @@ RUN apt-get update && apt-get install -y \
   --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
-COPY tests /tests
+COPY tests /opt/io-benchmarks/tests
+COPY io-benchmarks /opt/io-benchmarks/io-benchmarks
 
 RUN mkdir /mountpoint
 
-WORKDIR /mountpoint
-
-ENTRYPOINT [ "fio" ]
+ENTRYPOINT [ "/opt/io-benchmarks/io-benchmarks", "--tests-directory=/opt/io-benchmarks/tests", "--working-directory=/mountpoint/.io-benchmark" ]

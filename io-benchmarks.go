@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/giantswarm/io-benchmarks/command"
 	"github.com/giantswarm/io-benchmarks/utils"
 	"github.com/spf13/cobra"
 )
@@ -25,5 +26,6 @@ func ioBenchmarksRun(cmd *cobra.Command, args []string) {
 
 func main() {
 	ioBenchmarksCmd.AddCommand(versionCmd)
+	ioBenchmarksCmd.AddCommand(command.RunCmd)
 	ioBenchmarksCmd.Execute()
 }
