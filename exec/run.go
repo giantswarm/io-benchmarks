@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/giantswarm/io-benchmarks/utils"
 )
@@ -35,6 +36,7 @@ func RunCommand(executable string, arguments []string, workingDirectory string) 
 
 	cmd.Dir = workingDirectory
 
+	utils.Verbosef("running command: %s %s", executable, strings.Join(arguments, " "))
 	err := cmd.Run()
 
 	if err != nil {
