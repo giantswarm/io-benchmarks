@@ -2,6 +2,7 @@ package fio
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -16,6 +17,7 @@ type FioConfiguration struct {
 	DirectMode       bool
 
 	LogsDirectory        string
+	OutputFilename       string
 	GenerateBandwithLogs bool
 	GenerateIOPSLogs     bool
 	GenerateLatencyLogs  bool
@@ -49,7 +51,7 @@ func NewFioRunner(c FioConfiguration) (FioRunner, error) {
 	}, nil
 }
 
-func (r FioRunner) RunTest(test string) error {
+func (r FioRunner) RunTest(test string) (string, error) {
 	var cmdArguments []string
 
 	if r.conf.DirectMode {
@@ -72,20 +74,32 @@ func (r FioRunner) RunTest(test string) error {
 		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_lat_log=%s/benchmark", r.conf.LogsDirectory))
 	}
 
+	cmdArguments = append(cmdArguments, fmt.Sprintf("--output=%s/%s", r.conf.LogsDirectory, r.conf.OutputFilename))
+
 	testfilePath := fmt.Sprintf("%s/%s", r.conf.JobDirectory, test)
 	cmdArguments = append(cmdArguments, testfilePath)
 
 	if err := r.createWorkingDirectory(); err != nil {
-		return errgo.Mask(err)
+		return "", errgo.Mask(err)
 	}
 
 	runErr := exec.RunCommand("fio", cmdArguments, "")
 
 	if err := r.removeWorkingDirectory(); err != nil {
-		return errgo.Mask(err)
+		return "", errgo.Mask(err)
 	}
 
-	return errgo.Mask(runErr)
+	if runErr != nil {
+		return "", errgo.Mask(runErr)
+	}
+
+	output, err := r.getOutputLog()
+
+	if err != nil {
+		return "", errgo.Mask(err)
+	}
+
+	return output, nil
 }
 
 func (r FioRunner) createWorkingDirectory() error {
@@ -129,4 +143,13 @@ func (r FioRunner) removeWorkingDirectory() error {
 	}
 
 	return nil
+}
+
+func (r FioRunner) getOutputLog() (string, error) {
+	content, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", r.conf.LogsDirectory, r.conf.OutputFilename))
+	if err != nil {
+		errgo.Mask(err)
+	}
+
+	return string(content[:]), nil
 }

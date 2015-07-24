@@ -1,6 +1,8 @@
 package command
 
 import (
+	"fmt"
+
 	"github.com/giantswarm/io-benchmarks/fio"
 	"github.com/giantswarm/io-benchmarks/utils"
 
@@ -27,6 +29,7 @@ var (
 		TestsDirectory   string
 		WorkingDirectory string
 		OutputDirectory  string
+		SummaryFilename  string
 
 		GenerateBandwithStats bool
 		GenerateIOPSStats     bool
@@ -39,6 +42,7 @@ func init() {
 	RunCmd.PersistentFlags().StringVar(&runFlags.TestsDirectory, "tests-directory", "./tests", "Directory to search for test files")
 	RunCmd.PersistentFlags().StringVar(&runFlags.WorkingDirectory, "working-directory", "./.io-benchmark", "Directory to perform benchmarks in")
 	RunCmd.PersistentFlags().StringVar(&runFlags.OutputDirectory, "output-directory", "./io-benchmark-results", "Directory to store results to")
+	RunCmd.PersistentFlags().StringVar(&runFlags.SummaryFilename, "summary-filename", "summary.log", "Filename of the test run summary")
 
 	RunCmd.PersistentFlags().BoolVar(&runFlags.GenerateBandwithStats, "generate-bandwith-stats", true, "Generate bandwith stats for plots")
 	RunCmd.PersistentFlags().BoolVar(&runFlags.GenerateIOPSStats, "generate-iops-stats", true, "Generate IOPS stats for plots")
@@ -61,6 +65,7 @@ func runTestRun(cmd *cobra.Command, args []string) {
 		JobDirectory:         runFlags.TestsDirectory,
 		WorkingDirectory:     runFlags.WorkingDirectory,
 		DirectMode:           runFlags.DirectMode,
+		OutputFilename:       runFlags.SummaryFilename,
 		LogsDirectory:        runFlags.OutputDirectory,
 		GenerateBandwithLogs: runFlags.GenerateBandwithStats,
 		GenerateIOPSLogs:     runFlags.GenerateIOPSStats,
@@ -72,8 +77,10 @@ func runTestRun(cmd *cobra.Command, args []string) {
 		utils.ExitStderr(err)
 	}
 
-	if err := fioRunner.RunTest(test); err != nil {
+	if output, err := fioRunner.RunTest(test); err != nil {
 		utils.ExitStderr(err)
+	} else {
+		fmt.Print(output)
 	}
 
 	fio2gnuplotConf := fio.Fio2GNUPlotConfiguration{
