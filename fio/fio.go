@@ -14,7 +14,6 @@ import (
 type FioConfiguration struct {
 	JobDirectory     string
 	WorkingDirectory string
-	DirectMode       bool
 
 	LogsDirectory        string
 	OutputFilename       string
@@ -53,10 +52,6 @@ func NewFioRunner(c FioConfiguration) (FioRunner, error) {
 
 func (r FioRunner) RunTest(test string) (string, error) {
 	var cmdArguments []string
-
-	if r.conf.DirectMode {
-		cmdArguments = append(cmdArguments, "--direct=1")
-	}
 
 	if r.conf.WorkingDirectory != "" {
 		cmdArguments = append(cmdArguments, "--directory="+r.conf.WorkingDirectory)
