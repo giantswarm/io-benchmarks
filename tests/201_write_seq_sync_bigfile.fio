@@ -1,6 +1,6 @@
 ; Writes a 4G file in sequential order with 512K block size synchronously . O_DIRECT is turned off in this test.
 ; This should work similar to what dd does. (https://github.com/coreutils/coreutils/blob/master/src/dd.c)
-[global]
+[seq-writer]
 ioengine=sync
 rw=write
 bs=512K
