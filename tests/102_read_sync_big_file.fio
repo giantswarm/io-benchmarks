@@ -1,5 +1,0 @@
-; sync read one single file sequentially
-[sync-reader]
-ioengine=sync
-rw=read
-size=1G

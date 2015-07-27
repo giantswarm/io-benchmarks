@@ -1,0 +1,10 @@
+; Writes a 1G file in random order with 512K blocksize asynchronously and O_DIRECT is turned on.
+; This should bypass any Kernel buffering and test direct filesystem or device performance.
+[global]
+ioengine=libaio
+rw=randwrite
+size=4G
+bs=512K
+direct=1
+numjobs=4
+iodepth=4

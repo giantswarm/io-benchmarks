@@ -1,5 +1,0 @@
-; mmap one single file
-[mmap-reader]
-ioengine=mmap
-rw=randread
-size=1G

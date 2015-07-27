@@ -1,6 +1,0 @@
-[async-writers]
-ioengine=libaio
-rw=randwrite
-size=1G
-bs=4K
-numjobs=4
