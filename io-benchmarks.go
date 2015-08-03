@@ -9,8 +9,8 @@ import (
 var (
 	ioBenchmarksCmd = &cobra.Command{
 		Use:   "io-benchmarks",
-		Short: "CLI control panel for Quobyte",
-		Long:  "CLI cntrol panel for Quobyte",
+		Short: "CLI tool to run I/O benchmarks based on fio",
+		Long:  "CLI tool to run I/O benchmarks based on fio",
 		Run:   ioBenchmarksRun,
 	}
 )
