@@ -5,24 +5,8 @@
 ioengine=sync
 rw=write
 direct=1
+sync=1
 size=1G
 
-[sync-write-4k]
-bs=4K
-stonewall
-
-[sync-write-128k]
-bs=128K
-stonewall
-
-[sync-write-256K]
-bs=256K
-stonewall
-
-[sync-write-512k]
-bs=512K
-stonewall
-
-[sync-write-1M]
-bs=1M
-stonewall
+[sync-write-64k]
+bs=64K
