@@ -3,6 +3,6 @@
 [seq-reader]
 ioengine=sync
 rw=read
-bs=512
+bs=512K
 direct=0
 size=4G
