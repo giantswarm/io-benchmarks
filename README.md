@@ -10,7 +10,8 @@ plot graphs via `gnuplot`.
 Shipped with the source you can find some `fio` job definitions in the the `tests/`
 directory. Most of them are seperated for write and read specific I/O to test
 them individually. All jobs focused on read specific I/O start with `10*_*`
-while write specific jobs start with `20*_*`.
+while write specific jobs start with `20*_*`. Jobs starting with `00*_*` read
+a small file to test if the configuration works, not to benchmark the system.
 
 ## Usage
 
