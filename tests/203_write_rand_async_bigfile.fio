@@ -1,5 +1,5 @@
-; Writes a 1G file in random order with 512K blocksize asynchronously and O_DIRECT is turned on.
-; This should bypass any Kernel buffering and test direct filesystem or device performance.
+; Writes a 4G file in random order with 512K block size asynchronously.
+; The actual filesize does not matter too much but to keep the tests running a bit longer.
 [rand-writer]
 ioengine=libaio
 rw=randwrite
