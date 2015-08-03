@@ -16,6 +16,7 @@ type FioConfiguration struct {
 	WorkingDirectory string
 
 	LogsDirectory        string
+	LogsPrefix           string
 	OutputFilename       string
 	GenerateBandwithLogs bool
 	GenerateIOPSLogs     bool
@@ -58,15 +59,15 @@ func (r FioRunner) RunTest(test string) (string, error) {
 	}
 
 	if r.conf.GenerateBandwithLogs {
-		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_bw_log=%s/benchmark", r.conf.LogsDirectory))
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_bw_log=%s/%s", r.conf.LogsDirectory, r.conf.LogsPrefix))
 	}
 
 	if r.conf.GenerateIOPSLogs {
-		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_iops_log=%s/benchmark", r.conf.LogsDirectory))
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_iops_log=%s/%s", r.conf.LogsDirectory, r.conf.LogsPrefix))
 	}
 
 	if r.conf.GenerateLatencyLogs {
-		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_lat_log=%s/benchmark", r.conf.LogsDirectory))
+		cmdArguments = append(cmdArguments, fmt.Sprintf("--write_lat_log=%s/%s", r.conf.LogsDirectory, r.conf.LogsPrefix))
 	}
 
 	cmdArguments = append(cmdArguments, fmt.Sprintf("--output=%s/%s", r.conf.LogsDirectory, r.conf.OutputFilename))

@@ -64,6 +64,7 @@ func runTestRun(cmd *cobra.Command, args []string) {
 		WorkingDirectory:     runFlags.WorkingDirectory,
 		OutputFilename:       runFlags.SummaryFilename,
 		LogsDirectory:        runFlags.OutputDirectory,
+		LogsPrefix:           "benchmark",
 		GenerateBandwithLogs: runFlags.GenerateBandwithStats,
 		GenerateIOPSLogs:     runFlags.GenerateIOPSStats,
 		GenerateLatencyLogs:  runFlags.GenerateLatencyStats,
@@ -82,6 +83,12 @@ func runTestRun(cmd *cobra.Command, args []string) {
 
 	fio2gnuplotConf := fio.Fio2GNUPlotConfiguration{
 		LogsDirectory: runFlags.OutputDirectory,
+		LogsPatterns: []string{
+			"*_bw.*.log",
+			"*_iops.*.log",
+			"*_lat.*.log",
+			"*_clat.*.log",
+		},
 	}
 	fio2gnuplotRunner, err := fio.NewFio2GNUPlotRunner(fio2gnuplotConf)
 

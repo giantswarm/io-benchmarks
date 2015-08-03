@@ -10,6 +10,7 @@ import (
 
 type Fio2GNUPlotConfiguration struct {
 	LogsDirectory string
+	LogsPatterns  []string
 }
 
 type Fio2GNUPlotRunner struct {
@@ -33,14 +34,7 @@ func NewFio2GNUPlotRunner(c Fio2GNUPlotConfiguration) (Fio2GNUPlotRunner, error)
 }
 
 func (r Fio2GNUPlotRunner) RunPlots() error {
-	patterns := []string{
-		"*_bw.*.log",
-		"*_iops.*.log",
-		"*_lat.*.log",
-		"*_clat.*.log",
-	}
-
-	for _, pattern := range patterns {
+	for _, pattern := range r.conf.LogsPatterns {
 		if err := r.runPlotWithPattern(pattern); err != nil {
 			return errgo.Mask(err)
 		}
