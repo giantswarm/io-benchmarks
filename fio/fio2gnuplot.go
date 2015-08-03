@@ -24,6 +24,10 @@ func NewFio2GNUPlotRunner(c Fio2GNUPlotConfiguration) (Fio2GNUPlotRunner, error)
 		return Fio2GNUPlotRunner{}, errgo.Newf("Cannot locate fio2gnuplot. Looks like it is not installed on your system.")
 	}
 
+	if len(c.LogsPatterns) == 0 {
+		return Fio2GNUPlotRunner{}, errgo.Newf("You have to configure at least one log file pattern.")
+	}
+
 	if c.LogsDirectory, err = filepath.Abs(c.LogsDirectory); err != nil {
 		return Fio2GNUPlotRunner{}, errgo.Mask(err)
 	}

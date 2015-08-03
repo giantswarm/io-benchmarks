@@ -34,6 +34,13 @@ func NewFioRunner(c FioConfiguration) (FioRunner, error) {
 		return FioRunner{}, errgo.Newf("Cannot locate fio. Looks like it is not installed on your system.")
 	}
 
+	if c.GenerateBandwithLogs || c.GenerateIOPSLogs || c.GenerateLatencyLogs {
+		if len(c.LogsPrefix) < 1 {
+			return FioRunner{}, errgo.Newf("You have to set a log file prefix")
+
+		}
+	}
+
 	if c.JobDirectory, err = filepath.Abs(c.JobDirectory); err != nil {
 		return FioRunner{}, errgo.Mask(err)
 	}
