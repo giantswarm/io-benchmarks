@@ -36,6 +36,7 @@ deps: .gobuild
 	# Fetch public packages
 	GOPATH=$(GOPATH) go get -d github.com/$(ORGANIZATION)/$(PROJECT)
 
+# build
 $(PROJECT): VERSION $(SOURCE)
 	@echo Building for $(GOOS)/$(GOARCH)
 	docker run \
@@ -47,11 +48,6 @@ $(PROJECT): VERSION $(SOURCE)
 	    -w /usr/code \
 	    golang:1.4.2-cross \
 	    go build -a -ldflags "-X main.projectVersion $(VERSION) -X main.projectBuild $(COMMIT)" -o $(PROJECT)
-
-
-# build
-# $(PROJECT): $(SOURCE)
-# 	GOPATH=$(GOPATH) go build -ldflags "-X main.projectVersion $(VERSION)" -o $(PROJECT)
 
 install: $(PROJECT)
 	cp $(PROJECT) /usr/local/bin/
